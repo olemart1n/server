@@ -6,12 +6,15 @@ import (
 	"os"
 
 	"github.com/olemart1n/server/pkg/chat"
+	"github.com/olemart1n/server/pkg/game"
 	"github.com/olemart1n/server/pkg/handlelista"
 )
 
 func main() {
 	mistralClient := handlelista.NewMistralClient()
 	manager := chat.NewManager()
+	gameManager := game.NewGameManager()
+	http.HandleFunc("/car-game", gameManager.ServeGameWS)
 	http.HandleFunc("/ws",manager.ServeWS)
     http.HandleFunc("/robokokk/prompt1", func(w http.ResponseWriter, r *http.Request) {
         handlelista.Prompt(mistralClient, w, r)

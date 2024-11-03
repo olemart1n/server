@@ -13,12 +13,13 @@ import (
 
 func  Prompt (c *mistral.MistralClient, w http.ResponseWriter, r *http.Request) {
     recommendation, err := mistralChat(c, createPrompt1())
+    w.Header().Set("Content-Type", "application/json")
+
     if err != nil {
-        http.Error(w, "Mistral service error", http.StatusServiceUnavailable)
+        w.WriteHeader(http.StatusServiceUnavailable)
+        json.NewEncoder(w).Encode(map[string]string{"error": "mistral error"})
         return
     }
-
-    w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(recommendation)
 }
 
