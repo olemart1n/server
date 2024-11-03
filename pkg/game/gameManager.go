@@ -42,6 +42,7 @@ func NewGameManager() *GameManager {
 }
 
 func (m *GameManager) ServeGameWS(w http.ResponseWriter, r *http.Request) {
+	log.Println("New Client")
 	conn, err := websocketUpgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
