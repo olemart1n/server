@@ -15,6 +15,7 @@ var (
 		WriteBufferSize: 1024,
 		CheckOrigin: func(r *http.Request) bool {
 				origin := r.Header.Get("Origin")
+				log.Printf("WebSocket request origin: %s", origin)
 				switch origin {
 				case "http://localhost:5173":
 					return true
