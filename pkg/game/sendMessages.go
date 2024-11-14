@@ -36,7 +36,6 @@ func (c *GameClient) sendMessages() {
 				return
 			}
 		case <- ticker.C:
-			sendConnectedPlayersLength(c)
 			if err := c.connection.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
 				log.Println(err)
 				return

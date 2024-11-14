@@ -15,6 +15,7 @@ func main() {
 	manager := chat.NewManager()
 	gameManager := game.NewGameManager()
 	http.HandleFunc("/car-game", gameManager.ServeGameWS)
+	http.HandleFunc("/car-game-players", gameManager.SendPlayersViaHTTP)
 	http.HandleFunc("/ws",manager.ServeWS)
     http.HandleFunc("/robokokk/prompt1", func(w http.ResponseWriter, r *http.Request) {
         handlelista.Prompt(mistralClient, w, r)

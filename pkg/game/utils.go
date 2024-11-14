@@ -6,51 +6,63 @@ import (
 
 	"github.com/gorilla/websocket"
 )
-func sendConnectedPlayersLength (c *GameClient) {
-	data := map[string]interface{}{
-		"name": "connectedPlayersLength",
-		"payload": map[string]interface{}{
-			"value": len(c.gameManager.gameClients),
-		},
-	}
-	jsonBytes, err := json.Marshal(data)
-	if err != nil {
-		log.Printf("Error marshalling JSON: %v", err)
-		return
-	}
-	err = c.connection.WriteMessage(websocket.TextMessage, jsonBytes)
-	if err != nil {
-		log.Printf("Error sending client count to %s: %v", c.connection.RemoteAddr(), err)
-	}
-}
 
 func (m *GameManager) broadcastPlayer(name string, c *GameClient) {
-	data := map[string]interface{}{
-		"name": name,
-		"payload": map[string]interface{}{
-			"value": c.username,
-		},
-	}
-	jsonData, err := json.Marshal(data)
+
+	data, err := createJsonObject(name, PlayerClientData{Username: c.username, ID: c.id})
+	
 	if err != nil {
 		log.Println(err)
 		return
 	}
+
 	for player := range m.gameClients {
 		if player != c {
-			if err := player.connection.WriteMessage(websocket.TextMessage, jsonData); err != nil {
+			if err := player.connection.WriteMessage(websocket.TextMessage, data); err != nil {
 				log.Println(err)
 				return
 			}
-		}
-		
+		}	
 	}
 }
 
 func (m *GameManager) broadcastNewPlayer( c *GameClient) {
-	m.broadcastPlayer("newPlayer", c)
+	m.broadcastPlayer("new_player", c)
 }
 
 func (m *GameManager) broadcastLeavingPlayer( c *GameClient) {
-	m.broadcastPlayer("leavingPlayer", c)
+	m.broadcastPlayer("leaving_player", c)
+}
+
+
+// func getUsernames (m *GameManager) []string {
+// 	usernames := []string{}
+// 	for player := range m.gameClients {
+// 		usernames = append(usernames, player.username)
+// 	}
+// 	return usernames
+// }
+
+func getPlayerList (m *GameManager) []PlayerClientData {
+	playerList  := []PlayerClientData{}
+	for player := range m.gameClients {
+		p := PlayerClientData{}
+		p.Username = player.username
+		p.ID = player.id
+		playerList = append(playerList, p)
+	}
+	return playerList
+}
+
+func createJsonObject(name string, data interface{}) ([]byte, error) {
+    message := Message{
+        Message: name,
+        Payload: data,
+    }
+    jsonData, err := json.Marshal(message)
+    if err != nil {
+        log.Println(err)
+        return nil, err
+    }
+    return jsonData, nil
 }

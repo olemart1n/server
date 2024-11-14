@@ -3,38 +3,8 @@ package game
 import (
 	"log"
 	"net/http"
-	"sync"
-
-	"github.com/gorilla/websocket"
 )
 
-
-var (
-	websocketUpgrader = websocket.Upgrader{
-		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
-		CheckOrigin: func(r *http.Request) bool {
-			origin := r.Header.Get("Origin")
-			switch origin {
-			case "http://localhost:5173":
-				return true
-			case "https://olems.no":
-				return true
-			case "https://www.olems.no":
-				return true
-			}
-			return false
-		},
-		EnableCompression: true,
-	}
-)
-
-type GameClientList map[*GameClient]bool
-
-type GameManager struct {
-	gameClients GameClientList
-	sync.RWMutex
-}
 
 func NewGameManager() *GameManager {
 	m := &GameManager{
@@ -44,7 +14,6 @@ func NewGameManager() *GameManager {
 }
 
 func (m *GameManager) ServeGameWS(w http.ResponseWriter, r *http.Request) {
-	log.Println("New Client")
 	conn, err := websocketUpgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
@@ -63,8 +32,7 @@ func (m * GameManager) addGameClient (c *GameClient) {
 	m.Lock()
 	defer m.Unlock()
 	m.gameClients[c] = true
-	sendConnectedPlayersLength(c)
-	c.sendExistingPlayersToNewGameClient(m)
+	c.sendPlayerList()
 	m.broadcastNewPlayer(c)
 }
 

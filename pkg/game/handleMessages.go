@@ -31,7 +31,7 @@ func (c *GameClient) handleMessages() {
 			break // Break the loop to close conn & Cleanup
 		}
 
-		var request GameEvent
+		var request Message
 		if err := json.Unmarshal(payload, &request); err != nil {
 			log.Printf("error when marshalling message: %v", err)
 			break // Breaking the connection here might be harsh
