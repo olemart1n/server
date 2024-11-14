@@ -27,7 +27,7 @@ func NewGameClient(conn *websocket.Conn, manager *GameManager, username string) 
 }
 
 
-func (c *GameClient) sendPlayerList () error {
+func (c *GameClient) sendConnectedPlayers () error {
 	playerList := getPlayerList(c.gameManager)
     jsonData, err := createJsonObject("connected_players", playerList)
     if err != nil {

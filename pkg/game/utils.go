@@ -9,13 +9,11 @@ import (
 
 func (m *GameManager) broadcastPlayer(name string, c *GameClient) {
 
-	data, err := createJsonObject(name, PlayerClientData{Username: c.username, ID: c.id})
-	
+	data, err := createJsonObject(name, PlayerClientData{Username: c.username, ID: c.id})	
 	if err != nil {
 		log.Println(err)
 		return
 	}
-
 	for player := range m.gameClients {
 		if player != c {
 			if err := player.connection.WriteMessage(websocket.TextMessage, data); err != nil {
@@ -34,14 +32,6 @@ func (m *GameManager) broadcastLeavingPlayer( c *GameClient) {
 	m.broadcastPlayer("leaving_player", c)
 }
 
-
-// func getUsernames (m *GameManager) []string {
-// 	usernames := []string{}
-// 	for player := range m.gameClients {
-// 		usernames = append(usernames, player.username)
-// 	}
-// 	return usernames
-// }
 
 func getPlayerList (m *GameManager) []PlayerClientData {
 	playerList  := []PlayerClientData{}

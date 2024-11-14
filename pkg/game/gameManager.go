@@ -32,7 +32,7 @@ func (m * GameManager) addGameClient (c *GameClient) {
 	m.Lock()
 	defer m.Unlock()
 	m.gameClients[c] = true
-	c.sendPlayerList()
+	c.sendConnectedPlayers()
 	m.broadcastNewPlayer(c)
 }
 
