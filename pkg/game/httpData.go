@@ -1,9 +1,13 @@
 package game
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/olemart1n/server/pkg/game/utils"
+)
 
 
-func (m *GameManager) SendPlayersViaHTTP(w http.ResponseWriter, r *http.Request) {
+func (m *Manager) SendPlayersViaHTTP(w http.ResponseWriter, r *http.Request) {
     // Handle CORS headers
     origin := r.Header.Get("Origin")
     switch origin {
@@ -18,9 +22,9 @@ func (m *GameManager) SendPlayersViaHTTP(w http.ResponseWriter, r *http.Request)
 
     // Prepare response data (example logic)
 
-    players := getPlayerList(m)
+    spectators := getSpectatorList(m)
 
-	data, err := createJsonObject("connected_players", players)
+	data, err := utils.CreateJsonObject("connected_spectators", spectators)
     if err != nil {
         http.Error(w, "Internal Server Error", http.StatusInternalServerError)
         return

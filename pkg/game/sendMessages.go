@@ -1,45 +1,40 @@
 package game
 
 import (
+	"context"
 	"encoding/json"
 	"log"
-	"time"
 
 	"github.com/gorilla/websocket"
 )
 
-func (c *GameClient) sendMessages() {
+func (c *Client) sendMessages(m *Manager, ctx context.Context, cancel context.CancelFunc) {
 
-	ticker := time.NewTicker(pingInterval)
-	defer func() {
-		ticker.Stop()
-		c.gameManager.removeGameClient(c)
-	}()
 
 	for {
 		select {
-		case event, ok := <-c.egress:
+		case <- ctx.Done():
+			return
+		case event, ok := <-c.Egress:
 			if !ok {
-				if err := c.connection.WriteMessage(websocket.CloseMessage, nil); err != nil {
+				if err := c.Connection.WriteMessage(websocket.CloseMessage, nil); err != nil {
 					log.Printf("error in (case message, ok := <- c.egress): %s",err)
 				}
+				cancel()
 				return
 			}
 			data, err := json.Marshal(event)
 			if err != nil {
 				log.Println(err)
+				cancel()
 				return
 			}
 
-			if err := c.connection.WriteMessage(websocket.TextMessage, data); err != nil{
+			if err := c.Connection.WriteMessage(websocket.TextMessage, data); err != nil{
 				log.Println(err)
 				return
 			}
-		case <- ticker.C:
-			if err := c.connection.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
-				log.Println(err)
-				return
-			}
+
 		}
 	}
 }

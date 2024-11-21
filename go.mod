@@ -1,6 +1,8 @@
 module github.com/olemart1n/server
 
-go 1.22.1
+go 1.23
+
+toolchain go1.23.3
 
 require (
 	github.com/gage-technologies/mistral-go v1.1.0 // indirect

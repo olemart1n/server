@@ -1,4 +1,4 @@
-package game
+package utils
 
 import (
 	"net/http"
@@ -8,7 +8,7 @@ import (
 
 
 var (
-	websocketUpgrader = websocket.Upgrader{
+	WebsocketUpgrader = websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
 		CheckOrigin: func(r *http.Request) bool {
