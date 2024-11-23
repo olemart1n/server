@@ -52,7 +52,7 @@ func (m *Manager) ServeGameWS(w http.ResponseWriter, r *http.Request) {
 		spectator.handleConnection(m, cancel)
 	}()
 	go spectator.handlePingPong(m, ctx, cancel)
-	go spectator.sendMessages(m, ctx, cancel)
+	go spectator.sendMessages(ctx, cancel)
 }
 
 

@@ -43,6 +43,7 @@ func (c *Client) handleConnection(m *Manager, cancel context.CancelFunc) {
 			m.Lock()
             if _, playing := m.Players[c]; !playing {
 				m.sendAlreadyActivePlayers(c)
+				c.Hp = 100
                 m.Players[c] = true // Add to playingClients
 				m.broadcastPlayerToAll("player_joins", c, false)
 				
@@ -55,20 +56,21 @@ func (c *Client) handleConnection(m *Manager, cancel context.CancelFunc) {
 		case "hp_damage":
 			m.RLock() // Read lock because we're just iterating over Players
 
-			data, err := utils.TypeAsserter[DamageData](request)
+			data, _ := utils.TypeAsserter[DamageData](request)
 
-			if err != nil{
-				log.Printf("Error processing hp_damage message: %v", err)
-				break
-			}
-			c.Hp -= data.Amount
-			if(c.Hp <= 0) {
-				delete(m.Players, c)
-				m.broadcastPlayerToAll("player_died", c, false)
+			victim :=findPlayerById(m.Players, data.VictimId)
+
+
+			victim.Hp -= data.Damage
+			if(victim.Hp <= 0) {
+				delete(m.Players, victim)
+				m.broadcastPlayerToAll("player_died", victim, false)
 			} else {
 				toPlayerEgressToAll(m, request)
 			}
 			m.RUnlock()
+		case "car_data":
+			toPlayerEgressFilterOutClient(c, m, request)
 
 		default:
 			m.RLock()

@@ -35,6 +35,6 @@ type PlayerClientData struct {
 
 type DamageData struct {
 	VictimId string `json:"victimId"`
-	Amount   int    `json:"amount"`
-	ShooterId   int    `json:"shooterId"`
+	Damage   int    `json:"damage"`
+	ShooterId   string    `json:"shooterId"`
 }

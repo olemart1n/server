@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func (c *Client) sendMessages(m *Manager, ctx context.Context, cancel context.CancelFunc) {
+func (c *Client) sendMessages(ctx context.Context, cancel context.CancelFunc) {
 
 
 	for {

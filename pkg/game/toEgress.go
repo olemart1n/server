@@ -34,26 +34,26 @@ func toSpectatorEgressFilterOutClient(c *Client, m *Manager, request event.Messa
 	}
 }
 func toPlayerEgressToAll(m *Manager, request event.Message) {
-	for spectator := range m.Spectators {
+	for player := range m.Players {
 		
 			select {
-			case spectator.Egress <- request:
+			case player.Egress <- request:
 				// Successfully sent
 			default:
-				log.Printf("Dropping message for spectator %s due to full buffer", spectator.Id)
+				log.Printf("Dropping message for spectator %s due to full buffer", player.Id)
 			}
 		
 	}
 }
 
 func toPlayerEgressFilterOutClient(c *Client, m *Manager, request event.Message) {
-	for spectator := range m.Spectators {
-		if c != spectator {
+	for player := range m.Players {
+		if c != player {
 			select {
-			case spectator.Egress <- request:
+			case player.Egress <- request:
 				// Successfully sent
 			default:
-				log.Printf("Dropping message for spectator %s due to full buffer", spectator.Id)
+				log.Printf("Dropping message for spectator %s due to full buffer", player.Id)
 			}
 		}
 	}

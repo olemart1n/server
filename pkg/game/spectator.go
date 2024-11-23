@@ -13,7 +13,18 @@ func NewSpectator (conn *websocket.Conn, username string) (*Client, string) {
 		Connection: conn,
 		Egress: make(chan event.Message),
 		Id: id,
+		Hp: 100,
 	}
 
 	return client, id
+}
+
+
+func findPlayerById(players Players, id string) *Client {
+	for client := range players {
+		if client.Id == id {
+			return client
+		}
+	}
+	return nil
 }

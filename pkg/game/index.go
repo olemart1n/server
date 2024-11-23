@@ -21,7 +21,7 @@ func getSpectatorList (m *Manager) []PlayerClientData {
 }
 func getPlayerList (m *Manager) []PlayerClientData {
 	players  := []PlayerClientData{}
-	for player := range m.Spectators {
+	for player := range m.Players {
 		p := PlayerClientData{}
 		p.Username =player.Username
 		p.ID = player.Id
