@@ -9,6 +9,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/olemart1n/server/pkg/game/event"
+	"github.com/olemart1n/server/pkg/game/turso"
 	"github.com/olemart1n/server/pkg/game/utils"
 )
 
@@ -52,6 +53,11 @@ func (c *Client) handleConnection(m *Manager, cancel context.CancelFunc) {
 		case "chat_message":
             m.Lock()
 			toSpectatorEgressFilterOutClient(c, m, request)
+
+			data,_ := utils.TypeAsserter[ChatMessage](request)
+			err := turso.InsertMessage(m.DB, data.SenderUsername, data.Message, data.SenderId);if err!= nil {
+				log.Print(err)
+			}
             m.Unlock()
 		case "hp_damage":
 			m.RLock() // Read lock because we're just iterating over Players

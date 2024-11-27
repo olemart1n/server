@@ -1,6 +1,7 @@
 package game
 
 import (
+	"database/sql"
 	"sync"
 
 	"github.com/gorilla/websocket"
@@ -15,6 +16,7 @@ type Manager struct {
 	Players Players
 	Spectators Spectators
 	sync.RWMutex
+	DB *sql.DB
 }
 
 
@@ -38,3 +40,10 @@ type DamageData struct {
 	Damage   int    `json:"damage"`
 	ShooterId   string    `json:"shooterId"`
 }
+
+type ChatMessage struct {
+	SenderUsername string
+	SenderId string
+	Message string
+}
+

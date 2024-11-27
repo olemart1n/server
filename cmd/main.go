@@ -14,6 +14,7 @@ func main() {
 	mistralClient := handlelista.NewMistralClient()
 	manager := chat.NewManager()
 	gameManager := game.NewManager()
+
 	http.HandleFunc("/car-game", gameManager.ServeGameWS)
 	http.HandleFunc("/car-game-players", gameManager.SendPlayersViaHTTP)
 	http.HandleFunc("/ws",manager.ServeWS)

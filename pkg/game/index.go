@@ -1,9 +1,31 @@
 package game
 
+import (
+	"database/sql"
+	"log"
+	"os"
+
+	"github.com/olemart1n/server/pkg/game/turso"
+)
+
 func NewManager() *Manager {
+	var db *sql.DB
+	var err error
+
+	if os.Getenv("PRODUCTION") == "true" {
+		db, err = turso.ProdTursoDB()
+	} else {
+		log.Println("DEV DB")
+		db, err = turso.DevTursoDB()
+	}
+	if err != nil {
+		log.Print(err)
+	}
+
 	m := &Manager{
 		Players: make(Players),
 		Spectators: make(Spectators),
+		DB: db,
 	}
 	return m
 }
